@@ -631,11 +631,14 @@
         
         .game-character {
             position: absolute;
-            width: 40px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             bottom: 0;
             left: 50px;
-            background-color: var(--accent-color);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><path d="M30,10 Q40,0 50,10 L55,25 Q60,35 50,40 L45,50 Q40,60 30,55 Q20,60 15,50 L10,40 Q0,35 5,25 L10,10 Q20,0 30,10" fill="%237c4dff"/><circle cx="25" cy="25" r="3" fill="%23fff"/><circle cx="35" cy="25" r="3" fill="%23fff"/><path d="M25,35 Q30,40 35,35" stroke="%23fff" stroke-width="2" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: transform 0.1s;
         }
         
         .game-obstacle {
@@ -645,6 +648,7 @@
             bottom: 0;
             right: 0;
             background-color: #ff3d71;
+            border-radius: 5px;
         }
         
         .game-ground {
@@ -667,6 +671,97 @@
             text-align: center;
         }
         
+        .game-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .game-btn {
+            padding: 12px 20px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .game-btn:hover {
+            background: #7c4dff;
+            transform: translateY(-3px);
+        }
+        
+        .play-again-btn {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .play-again-btn:hover {
+            background: #7c4dff;
+            transform: translateY(-2px);
+        }
+        
+        .snake-game {
+            width: 400px;
+            height: 400px;
+            border: 2px solid var(--accent-color);
+            position: relative;
+            background-color: var(--bg-color);
+        }
+        
+        .snake-segment {
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-color);
+            position: absolute;
+            border-radius: 3px;
+        }
+        
+        .snake-food {
+            width: 20px;
+            height: 20px;
+            background-color: #ff3d71;
+            position: absolute;
+            border-radius: 50%;
+        }
+        
+        .tetris-game {
+            width: 200px;
+            height: 400px;
+            border: 2px solid var(--accent-color);
+            position: relative;
+            background-color: var(--bg-color);
+        }
+        
+        .tetris-block {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            background-color: var(--accent-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .sand-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #f5d76e;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -687,7 +782,7 @@
                 width: 100%;
             }
             
-            .game-container {
+            .game-container, .snake-game, .tetris-game {
                 width: 90%;
             }
         }
@@ -784,10 +879,15 @@
                     
                     <div class="window entertainment-explorer" id="entertainmentExplorer">
                         <div class="window-header"><i class="fas fa-gamepad"></i> Развлечения</div>
-                        <button class="notes-save-btn" id="guessMelodyBtn"><i class="fas fa-music"></i> Угадай мелодию</button>
-                        <button class="notes-save-btn" id="fortuneBtn"><i class="fas fa-crystal-ball"></i> Погадать</button>
-                        <button class="notes-save-btn" id="toastBtn"><i class="fas fa-glass-cheers"></i> Найти тост</button>
-                        <button class="notes-save-btn" id="poemBtn"><i class="fas fa-book"></i> Прочитать стих</button>
+                        <div class="game-menu">
+                            <button class="game-btn" id="dinoGameBtn">Динозаврик</button>
+                            <button class="game-btn" id="snakeGameBtn">Змейка</button>
+                            <button class="game-btn" id="tetrisGameBtn">Тетрис</button>
+                            <button class="game-btn" id="guessMelodyBtn">Угадай мелодию</button>
+                            <button class="game-btn" id="fortuneBtn">Погадать</button>
+                            <button class="game-btn" id="toastBtn">Найти тост</button>
+                            <button class="game-btn" id="poemBtn">Прочитать стих</button>
+                        </div>
                     </div>
                     
                     <div class="window settings-explorer" id="settingsExplorer">
@@ -842,6 +942,30 @@
             Нажмите ПРОБЕЛ, чтобы прыгнуть<br>
             Игра закончится, если вы столкнетесь с препятствием
         </div>
+        <button class="game-btn" id="backToMenuBtn">Вернуться в меню</button>
+        <button class="play-again-btn" id="playAgainBtn">Еще раз</button>
+    </div>
+
+    <div class="offline-game" id="snakeGame" style="display: none;">
+        <div class="game-score" id="snakeScore">Счет: 0</div>
+        <div class="snake-game" id="snakeGameContainer"></div>
+        <div class="game-instructions">
+            Используйте стрелки для управления змейкой<br>
+            Соберите как можно больше еды
+        </div>
+        <button class="game-btn" id="backToMenuBtnSnake">Вернуться в меню</button>
+        <button class="play-again-btn" id="playAgainBtnSnake">Еще раз</button>
+    </div>
+
+    <div class="offline-game" id="tetrisGame" style="display: none;">
+        <div class="game-score" id="tetrisScore">Счет: 0</div>
+        <div class="tetris-game" id="tetrisGameContainer"></div>
+        <div class="game-instructions">
+            Используйте стрелки для управления фигурами<br>
+            Соберите линии, чтобы заработать очки
+        </div>
+        <button class="game-btn" id="backToMenuBtnTetris">Вернуться в меню</button>
+        <button class="play-again-btn" id="playAgainBtnTetris">Еще раз</button>
     </div>
 
     <script>
@@ -887,6 +1011,21 @@
         const gameContainer = document.getElementById('gameContainer');
         const gameCharacter = document.getElementById('gameCharacter');
         const gameScore = document.getElementById('gameScore');
+        const backToMenuBtn = document.getElementById('backToMenuBtn');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const dinoGameBtn = document.getElementById('dinoGameBtn');
+        const snakeGameBtn = document.getElementById('snakeGameBtn');
+        const tetrisGameBtn = document.getElementById('tetrisGameBtn');
+        const snakeGame = document.getElementById('snakeGame');
+        const snakeGameContainer = document.getElementById('snakeGameContainer');
+        const snakeScore = document.getElementById('snakeScore');
+        const backToMenuBtnSnake = document.getElementById('backToMenuBtnSnake');
+        const playAgainBtnSnake = document.getElementById('playAgainBtnSnake');
+        const tetrisGame = document.getElementById('tetrisGame');
+        const tetrisGameContainer = document.getElementById('tetrisGameContainer');
+        const tetrisScore = document.getElementById('tetrisScore');
+        const backToMenuBtnTetris = document.getElementById('backToMenuBtnTetris');
+        const playAgainBtnTetris = document.getElementById('playAgainBtnTetris');
         
         let isListening = false;
         let isAssistantSpeaking = false;
@@ -918,6 +1057,18 @@
         let jumpHeight = 0;
         let obstaclePosition = 600;
         let obstacleInterval;
+        let isLightModeActive = false;
+        let lightModeTimeout;
+        let snake = [];
+        let food = {};
+        let direction = 'right';
+        let snakeGameInterval;
+        let snakeScoreValue = 0;
+        let tetrisGrid = Array(20).fill().map(() => Array(10).fill(0));
+        let currentTetrisPiece = null;
+        let tetrisScoreValue = 0;
+        let tetrisGameInterval;
+        let sandParticles = [];
         const OPENAI_API_KEY = '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';
         
         const poems = [
@@ -972,6 +1123,16 @@
             'lnk': 'ярлык'
         };
         
+        const tetrisPieces = [
+            [[1, 1, 1, 1]], // I
+            [[1, 1], [1, 1]], // O
+            [[1, 1, 1], [0, 1, 0]], // T
+            [[1, 1, 1], [1, 0, 0]], // L
+            [[1, 1, 1], [0, 0, 1]], // J
+            [[0, 1, 1], [1, 1, 0]], // S
+            [[1, 1, 0], [0, 1, 1]]  // Z
+        ];
+        
         function initApp() {
             initVoiceRecognition();
             setupEventListeners();
@@ -984,7 +1145,7 @@
             
             if (chats[activeChatId].history.length === 0) {
                 setTimeout(() => {
-                    const welcomeMessage = 'Привет! Я ваш умный голосовой помощник. Доступ к файлам и папкам уже открыт. Вы можете просматривать их здесь или сказать название файла или папки для открытия.';
+                    const welcomeMessage = 'Привет! Я ваш умный голосовой помощник. Доступ к файлам и папкам уже открыт. Вы можете просматривать их здесь или сказать название файла или папки для открытия. Скажите "лайт" для активации голосового управления без подтверждения.';
                     addMessage('assistant', welcomeMessage, true);
                     speak(welcomeMessage);
                 }, 1000);
@@ -1000,8 +1161,12 @@
             
             window.addEventListener('online', () => {
                 offlineGame.style.display = 'none';
+                snakeGame.style.display = 'none';
+                tetrisGame.style.display = 'none';
                 isGameRunning = false;
                 clearInterval(obstacleInterval);
+                clearInterval(snakeGameInterval);
+                clearInterval(tetrisGameInterval);
             });
             
             window.addEventListener('offline', startOfflineGame);
@@ -1009,6 +1174,8 @@
         
         function startOfflineGame() {
             offlineGame.style.display = 'flex';
+            snakeGame.style.display = 'none';
+            tetrisGame.style.display = 'none';
             isGameRunning = true;
             gameScoreValue = 0;
             gameScore.textContent = 'Счет: 0';
@@ -1021,19 +1188,333 @@
             obstacleInterval = setInterval(updateGame, 20);
         }
         
+        function startSnakeGame() {
+            offlineGame.style.display = 'none';
+            snakeGame.style.display = 'flex';
+            tetrisGame.style.display = 'none';
+            isGameRunning = true;
+            snakeScoreValue = 0;
+            snakeScore.textContent = 'Счет: 0';
+            
+            snake = [
+                {x: 200, y: 200},
+                {x: 180, y: 200},
+                {x: 160, y: 200}
+            ];
+            
+            direction = 'right';
+            spawnFood();
+            
+            snakeGameContainer.innerHTML = '';
+            renderSnake();
+            renderFood();
+            
+            clearInterval(snakeGameInterval);
+            snakeGameInterval = setInterval(updateSnakeGame, 150);
+        }
+        
+        function startTetrisGame() {
+            offlineGame.style.display = 'none';
+            snakeGame.style.display = 'none';
+            tetrisGame.style.display = 'flex';
+            isGameRunning = true;
+            tetrisScoreValue = 0;
+            tetrisScore.textContent = 'Счет: 0';
+            
+            tetrisGrid = Array(20).fill().map(() => Array(10).fill(0));
+            spawnTetrisPiece();
+            
+            tetrisGameContainer.innerHTML = '';
+            renderTetris();
+            
+            clearInterval(tetrisGameInterval);
+            tetrisGameInterval = setInterval(updateTetrisGame, 500);
+        }
+        
+        function spawnTetrisPiece() {
+            const randomPiece = tetrisPieces[Math.floor(Math.random() * tetrisPieces.length)];
+            currentTetrisPiece = {
+                shape: randomPiece,
+                x: 4,
+                y: 0
+            };
+        }
+        
+        function updateTetrisGame() {
+            if (!currentTetrisPiece) return;
+            
+            if (checkTetrisCollision(currentTetrisPiece.x, currentTetrisPiece.y + 1, currentTetrisPiece.shape)) {
+                mergePieceToGrid();
+                clearLines();
+                spawnTetrisPiece();
+                
+                if (checkTetrisCollision(currentTetrisPiece.x, currentTetrisPiece.y, currentTetrisPiece.shape)) {
+                    gameOver();
+                    return;
+                }
+            } else {
+                currentTetrisPiece.y++;
+            }
+            
+            renderTetris();
+        }
+        
+        function mergePieceToGrid() {
+            for (let y = 0; y < currentTetrisPiece.shape.length; y++) {
+                for (let x = 0; x < currentTetrisPiece.shape[y].length; x++) {
+                    if (currentTetrisPiece.shape[y][x]) {
+                        tetrisGrid[currentTetrisPiece.y + y][currentTetrisPiece.x + x] = 1;
+                        createSandParticles(currentTetrisPiece.x + x, currentTetrisPiece.y + y);
+                    }
+                }
+            }
+        }
+        
+        function createSandParticles(gridX, gridY) {
+            const x = gridX * 20;
+            const y = gridY * 20;
+            
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'sand-particle';
+                particle.style.left = `${x + Math.random() * 20}px`;
+                particle.style.top = `${y + Math.random() * 20}px`;
+                tetrisGameContainer.appendChild(particle);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 1 + Math.random() * 3;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed;
+                
+                sandParticles.push({
+                    element: particle,
+                    x: parseFloat(particle.style.left),
+                    y: parseFloat(particle.style.top),
+                    vx: vx,
+                    vy: vy,
+                    life: 100 + Math.random() * 100
+                });
+            }
+        }
+        
+        function updateSandParticles() {
+            for (let i = sandParticles.length - 1; i >= 0; i--) {
+                const p = sandParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.1; // gravity
+                p.life--;
+                
+                p.element.style.left = `${p.x}px`;
+                p.element.style.top = `${p.y}px`;
+                p.element.style.opacity = p.life / 100;
+                
+                if (p.life <= 0) {
+                    p.element.remove();
+                    sandParticles.splice(i, 1);
+                }
+            }
+        }
+        
+        function clearLines() {
+            let linesCleared = 0;
+            
+            for (let y = tetrisGrid.length - 1; y >= 0; y--) {
+                if (tetrisGrid[y].every(cell => cell === 1)) {
+                    // Create sand particles for the cleared line
+                    for (let x = 0; x < 10; x++) {
+                        createSandParticles(x, y);
+                    }
+                    
+                    tetrisGrid.splice(y, 1);
+                    tetrisGrid.unshift(Array(10).fill(0));
+                    linesCleared++;
+                    y++;
+                }
+            }
+            
+            if (linesCleared > 0) {
+                tetrisScoreValue += linesCleared * 100;
+                tetrisScore.textContent = `Счет: ${tetrisScoreValue}`;
+            }
+        }
+        
+        function checkTetrisCollision(x, y, shape) {
+            for (let row = 0; row < shape.length; row++) {
+                for (let col = 0; col < shape[row].length; col++) {
+                    if (shape[row][col]) {
+                        const newX = x + col;
+                        const newY = y + row;
+                        
+                        if (newX < 0 || newX >= 10 || newY >= 20) {
+                            return true;
+                        }
+                        
+                        if (newY >= 0 && tetrisGrid[newY][newX]) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function rotateTetrisPiece() {
+            if (!currentTetrisPiece) return;
+            
+            const rotated = [];
+            for (let i = 0; i < currentTetrisPiece.shape[0].length; i++) {
+                rotated.push([]);
+                for (let j = currentTetrisPiece.shape.length - 1; j >= 0; j--) {
+                    rotated[i].push(currentTetrisPiece.shape[j][i]);
+                }
+            }
+            
+            if (!checkTetrisCollision(currentTetrisPiece.x, currentTetrisPiece.y, rotated)) {
+                currentTetrisPiece.shape = rotated;
+                renderTetris();
+            }
+        }
+        
+        function renderTetris() {
+            tetrisGameContainer.innerHTML = '';
+            
+            // Update sand particles
+            updateSandParticles();
+            
+            // Render grid blocks
+            for (let y = 0; y < tetrisGrid.length; y++) {
+                for (let x = 0; x < tetrisGrid[y].length; x++) {
+                    if (tetrisGrid[y][x]) {
+                        const block = document.createElement('div');
+                        block.className = 'tetris-block';
+                        block.style.left = `${x * 20}px`;
+                        block.style.top = `${y * 20}px`;
+                        tetrisGameContainer.appendChild(block);
+                    }
+                }
+            }
+            
+            // Render current piece
+            if (currentTetrisPiece) {
+                for (let y = 0; y < currentTetrisPiece.shape.length; y++) {
+                    for (let x = 0; x < currentTetrisPiece.shape[y].length; x++) {
+                        if (currentTetrisPiece.shape[y][x]) {
+                            const block = document.createElement('div');
+                            block.className = 'tetris-block';
+                            block.style.left = `${(currentTetrisPiece.x + x) * 20}px`;
+                            block.style.top = `${(currentTetrisPiece.y + y) * 20}px`;
+                            tetrisGameContainer.appendChild(block);
+                        }
+                    }
+                }
+            }
+        }
+        
+        function spawnFood() {
+            const maxX = Math.floor(snakeGameContainer.offsetWidth / 20) - 1;
+            const maxY = Math.floor(snakeGameContainer.offsetHeight / 20) - 1;
+            
+            food = {
+                x: Math.floor(Math.random() * maxX) * 20,
+                y: Math.floor(Math.random() * maxY) * 20
+            };
+            
+            for (const segment of snake) {
+                if (segment.x === food.x && segment.y === food.y) {
+                    return spawnFood();
+                }
+            }
+        }
+        
+        function updateSnakeGame() {
+            const head = {...snake[0]};
+            
+            switch(direction) {
+                case 'up':
+                    head.y -= 20;
+                    break;
+                case 'down':
+                    head.y += 20;
+                    break;
+                case 'left':
+                    head.x -= 20;
+                    break;
+                case 'right':
+                    head.x += 20;
+                    break;
+            }
+            
+            if (
+                head.x < 0 || 
+                head.y < 0 || 
+                head.x >= snakeGameContainer.offsetWidth || 
+                head.y >= snakeGameContainer.offsetHeight ||
+                snake.some(segment => segment.x === head.x && segment.y === head.y)
+            ) {
+                gameOver();
+                return;
+            }
+            
+            snake.unshift(head);
+            
+            if (head.x === food.x && head.y === food.y) {
+                snakeScoreValue += 10;
+                snakeScore.textContent = `Счет: ${snakeScoreValue}`;
+                spawnFood();
+            } else {
+                snake.pop();
+            }
+            
+            renderSnake();
+            renderFood();
+        }
+        
+        function renderSnake() {
+            const snakeSegments = document.querySelectorAll('.snake-segment');
+            snakeSegments.forEach(segment => segment.remove());
+            
+            for (const segment of snake) {
+                const snakeElement = document.createElement('div');
+                snakeElement.className = 'snake-segment';
+                snakeElement.style.left = `${segment.x}px`;
+                snakeElement.style.top = `${segment.y}px`;
+                snakeGameContainer.appendChild(snakeElement);
+            }
+        }
+        
+        function renderFood() {
+            const foodElements = document.querySelectorAll('.snake-food');
+            foodElements.forEach(food => food.remove());
+            
+            const foodElement = document.createElement('div');
+            foodElement.className = 'snake-food';
+            foodElement.style.left = `${food.x}px`;
+            foodElement.style.top = `${food.y}px`;
+            snakeGameContainer.appendChild(foodElement);
+        }
+        
+        function gameOver() {
+            isGameRunning = false;
+            clearInterval(obstacleInterval);
+            clearInterval(snakeGameInterval);
+            clearInterval(tetrisGameInterval);
+            speak(`Игра окончена. Ваш счет: ${gameScoreValue || snakeScoreValue || tetrisScoreValue}`);
+        }
+        
         function updateGame() {
             gameScoreValue++;
             gameScore.textContent = `Счет: ${Math.floor(gameScoreValue / 10)}`;
             
             if (isJumping) {
-                jumpHeight += 5;
+                jumpHeight += 8; // Increased jump speed
                 gameCharacter.style.bottom = `${jumpHeight}px`;
                 
-                if (jumpHeight > 100) {
+                if (jumpHeight > 120) { // Higher jump
                     isJumping = false;
                 }
             } else if (parseInt(gameCharacter.style.bottom || '0') > 0) {
-                jumpHeight -= 5;
+                jumpHeight -= 6; // Faster fall
                 gameCharacter.style.bottom = `${jumpHeight}px`;
             }
             
@@ -1054,9 +1535,7 @@
             }
             
             if (checkCollision()) {
-                clearInterval(obstacleInterval);
-                isGameRunning = false;
-                speak(`Игра окончена. Ваш счет: ${Math.floor(gameScoreValue / 10)}`);
+                gameOver();
             }
         }
         
@@ -1080,6 +1559,10 @@
             if (parseInt(gameCharacter.style.bottom || '0') === 0) {
                 isJumping = true;
                 jumpHeight = 0;
+                gameCharacter.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    gameCharacter.style.transform = 'scale(1)';
+                }, 200);
             }
         }
         
@@ -1217,6 +1700,47 @@
                 e.preventDefault();
                 jump();
             }
+            if (e.key === 'ArrowUp' && snakeGame.style.display === 'flex' && direction !== 'down') {
+                e.preventDefault();
+                direction = 'up';
+            }
+            if (e.key === 'ArrowDown' && snakeGame.style.display === 'flex' && direction !== 'up') {
+                e.preventDefault();
+                direction = 'down';
+            }
+            if (e.key === 'ArrowLeft' && snakeGame.style.display === 'flex' && direction !== 'right') {
+                e.preventDefault();
+                direction = 'left';
+            }
+            if (e.key === 'ArrowRight' && snakeGame.style.display === 'flex' && direction !== 'left') {
+                e.preventDefault();
+                direction = 'right';
+            }
+            if (e.key === 'ArrowUp' && tetrisGame.style.display === 'flex') {
+                e.preventDefault();
+                rotateTetrisPiece();
+            }
+            if (e.key === 'ArrowDown' && tetrisGame.style.display === 'flex') {
+                e.preventDefault();
+                if (!checkTetrisCollision(currentTetrisPiece.x, currentTetrisPiece.y + 1, currentTetrisPiece.shape)) {
+                    currentTetrisPiece.y++;
+                    renderTetris();
+                }
+            }
+            if (e.key === 'ArrowLeft' && tetrisGame.style.display === 'flex') {
+                e.preventDefault();
+                if (!checkTetrisCollision(currentTetrisPiece.x - 1, currentTetrisPiece.y, currentTetrisPiece.shape)) {
+                    currentTetrisPiece.x--;
+                    renderTetris();
+                }
+            }
+            if (e.key === 'ArrowRight' && tetrisGame.style.display === 'flex') {
+                e.preventDefault();
+                if (!checkTetrisCollision(currentTetrisPiece.x + 1, currentTetrisPiece.y, currentTetrisPiece.shape)) {
+                    currentTetrisPiece.x++;
+                    renderTetris();
+                }
+            }
         }
         
         function startInactivityTimer() {
@@ -1351,411 +1875,6 @@
                 chatArea.appendChild(messageDiv);
             });
             chatArea.scrollTop = chatArea.scrollHeight;
-        }
-        
-        function initVoiceRecognition() {
-            if ('webkitSpeechRecognition' in window) {
-                recognition = new webkitSpeechRecognition();
-                recognition.lang = 'ru-RU';
-                recognition.interimResults = false;
-                recognition.continuous = false;
-                recognition.maxAlternatives = 3;
-                
-                if (noiseSuppressionEnabled) {
-                    recognition.continuous = false;
-                    recognition.interimResults = false;
-                }
-                
-                recognition.onstart = () => {
-                    isListening = true;
-                    micBtn.classList.add('active');
-                    waves.style.display = 'flex';
-                    animateWaves();
-                };
-                
-                recognition.onresult = (event) => {
-                    const result = event.results[0];
-                    const transcript = result[0].transcript.trim();
-                    
-                    let finalTranscript = transcript;
-                    if (result.isFinal && result.length > 1) {
-                        const alternatives = Array.from(result).map(alt => ({
-                            text: alt.transcript,
-                            confidence: alt.confidence
-                        }));
-                        
-                        alternatives.sort((a, b) => b.confidence - a.confidence);
-                        finalTranscript = alternatives[0].text;
-                    }
-                    
-                    addMessage('user', finalTranscript);
-                    processUserInput(finalTranscript);
-                };
-                
-                recognition.onerror = (event) => {
-                    console.error('Ошибка распознавания:', event.error);
-                    addMessage('assistant', 'Не удалось распознать речь. Попробуйте ещё раз.', false);
-                    resetVoiceRecognition();
-                };
-                
-                recognition.onend = () => {
-                    resetVoiceRecognition();
-                };
-            } else {
-                addMessage('assistant', 'Ваш браузер не поддерживает голосовое распознавание. Пожалуйста, используйте Chrome или Edge.', true);
-                micBtn.disabled = true;
-            }
-        }
-        
-        function setupEventListeners() {
-            micBtn.addEventListener('click', toggleVoiceRecognition);
-            
-            sendBtn.addEventListener('click', () => {
-                if (textInput.value.trim()) {
-                    processUserInput(textInput.value);
-                    textInput.value = '';
-                }
-            });
-            
-            textInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && textInput.value.trim()) {
-                    processUserInput(textInput.value);
-                    textInput.value = '';
-                }
-            });
-            
-            clearBtn.addEventListener('click', clearConversation);
-            
-            backBtn.addEventListener('click', () => {
-                window.location.href = '024.html';
-            });
-            
-            notesSaveBtn.addEventListener('click', saveNotes);
-            
-            openInExplorerBtn.addEventListener('click', async () => {
-                if (selectedFile) {
-                    await openSelectedFile();
-                } else {
-                    speak('Пожалуйста, выберите файл для открытия.');
-                }
-            });
-            
-            deleteFileBtn.addEventListener('click', async () => {
-                if (selectedFile) {
-                    if (confirm(`Вы уверены, что хотите удалить "${selectedFile.name}"?`)) {
-                        const handle = fileHandles.get(selectedFile.path);
-                        if (handle) {
-                            try {
-                                await handle.remove();
-                                fileHandles.delete(selectedFile.path);
-                                speak(`Файл "${selectedFile.name}" удален.`);
-                                selectedFile = null;
-                                filePreview.classList.remove('active');
-                                renderFileSystem();
-                            } catch (error) {
-                                console.error('Ошибка удаления файла:', error);
-                                speak('Не удалось удалить файл.');
-                            }
-                        }
-                    }
-                } else {
-                    speak('Пожалуйста, выберите файл для удаления.');
-                }
-            });
-            
-            renameFileBtn.addEventListener('click', async () => {
-                if (selectedFile) {
-                    const newName = prompt('Введите новое имя:', selectedFile.name);
-                    if (newName && newName !== selectedFile.name) {
-                        const handle = fileHandles.get(selectedFile.path);
-                        if (handle) {
-                            try {
-                                await handle.move(newName);
-                                fileHandles.delete(selectedFile.path);
-                                selectedFile.name = newName;
-                                selectedFile.path = selectedFile.path.split('/').slice(0, -1).concat(newName).join('/');
-                                fileHandles.set(selectedFile.path, handle);
-                                speak(`Файл переименован в "${newName}".`);
-                                renderFileSystem();
-                            } catch (error) {
-                                console.error('Ошибка переименования файла:', error);
-                                speak('Не удалось переименовать файл.');
-                            }
-                        }
-                    }
-                } else {
-                    speak('Пожалуйста, выберите файл для переименования.');
-                }
-            });
-            
-            browseFilesBtn.addEventListener('click', async () => {
-                try {
-                    const dirHandle = await window.showDirectoryPicker();
-                    await processDirectory(dirHandle);
-                    renderFileSystem();
-                    speak('Файлы и папки успешно добавлены из проводника.');
-                } catch (error) {
-                    console.error('Ошибка выбора директории:', error);
-                }
-            });
-            
-            refreshFilesBtn.addEventListener('click', () => {
-                renderFileSystem();
-                speak('Список файлов обновлен.');
-            });
-            
-            guessMelodyBtn.addEventListener('click', playGuessMelody);
-            fortuneBtn.addEventListener('click', tellFortune);
-            toastBtn.addEventListener('click', tellToast);
-            poemBtn.addEventListener('click', readPoem);
-            saveSettingsBtn.addEventListener('click', saveSettings);
-            newChatBtn.addEventListener('click', createNewChat);
-            
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, unhighlight, false);
-            });
-            
-            dropZone.addEventListener('drop', handleDrop, false);
-            
-            noiseSuppressionControl.addEventListener('change', () => {
-                noiseSuppressionEnabled = noiseSuppressionControl.checked;
-                updateNoiseSuppressionIndicator();
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                
-                if (mouseControlActive) {
-                    mousePointer.style.left = `${mouseX - 10}px`;
-                    mousePointer.style.top = `${mouseY - 10}px`;
-                }
-            });
-        }
-        
-        function simulateMouseClick(x, y) {
-            mouseClickEffect.style.left = `${x - 15}px`;
-            mouseClickEffect.style.top = `${y - 15}px`;
-            mouseClickEffect.style.display = 'block';
-            
-            setTimeout(() => {
-                mouseClickEffect.style.display = 'none';
-            }, 500);
-            
-            const element = document.elementFromPoint(x, y);
-            if (element) {
-                element.click();
-            }
-        }
-        
-        function moveMouse(direction, amount = 10) {
-            if (!mouseControlActive) {
-                mouseControlActive = true;
-                mousePointer.style.display = 'block';
-                speak('Режим управления мышкой активирован. Скажите "влево", "вправо", "вверх" или "вниз" для перемещения. "Клик" для нажатия. "Отмена" для выхода.');
-                return;
-            }
-            
-            switch(direction) {
-                case 'left':
-                    mouseX = Math.max(0, mouseX - amount);
-                    break;
-                case 'right':
-                    mouseX = Math.min(window.innerWidth, mouseX + amount);
-                    break;
-                case 'up':
-                    mouseY = Math.max(0, mouseY - amount);
-                    break;
-                case 'down':
-                    mouseY = Math.min(window.innerHeight, mouseY + amount);
-                    break;
-            }
-            
-            mousePointer.style.left = `${mouseX - 10}px`;
-            mousePointer.style.top = `${mouseY - 10}px`;
-        }
-        
-        function stopMouseControl() {
-            mouseControlActive = false;
-            mousePointer.style.display = 'none';
-            speak('Режим управления мышкой деактивирован.');
-        }
-        
-        async function openSelectedFile() {
-            if (!selectedFile) return;
-            
-            const handle = fileHandles.get(selectedFile.path);
-            if (handle) {
-                try {
-                    const file = await handle.getFile();
-                    addToRecentFiles(selectedFile);
-                    
-                    if (file.type.startsWith('text/') || file.type === 'application/json') {
-                        const text = await file.text();
-                        mainContent.innerHTML = `<pre>${text}</pre>`;
-                        speak(`Содержимое файла "${selectedFile.name}": ${text.substring(0, 100)}...`);
-                    } else if (file.type.startsWith('image/')) {
-                        const fileURL = URL.createObjectURL(file);
-                        mainContent.innerHTML = `<img src="${fileURL}" style="max-width:100%; max-height:400px;">`;
-                        speak(`Открыто изображение "${selectedFile.name}".`);
-                    } else if (file.type.startsWith('audio/')) {
-                        const fileURL = URL.createObjectURL(file);
-                        mainContent.innerHTML = `
-                            <audio controls autoplay style="width:100%">
-                                <source src="${fileURL}" type="${file.type}">
-                            </audio>
-                        `;
-                        speak(`Воспроизводится аудио файл "${selectedFile.name}".`);
-                    } else if (file.type.startsWith('video/')) {
-                        const fileURL = URL.createObjectURL(file);
-                        mainContent.innerHTML = `
-                            <video controls autoplay style="max-width:100%; max-height:400px;">
-                                <source src="${fileURL}" type="${file.type}">
-                            </video>
-                        `;
-                        speak(`Воспроизводится видео файл "${selectedFile.name}".`);
-                    } else if (selectedFile.name.endsWith('.html') || selectedFile.name.endsWith('.htm')) {
-                        const text = await file.text();
-                        mainContent.innerHTML = text;
-                        speak(`Открыта веб-страница "${selectedFile.name}".`);
-                    } else {
-                        const fileURL = URL.createObjectURL(file);
-                        if (selectedFile.name.endsWith('.docx') || selectedFile.name.endsWith('.pptx')) {
-                            window.open(`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileURL)}`, '_blank');
-                        } else if (selectedFile.name.endsWith('.exe')) {
-                            if (confirm('Вы уверены, что хотите запустить исполняемый файл? Это может быть опасно.')) {
-                                window.open(fileURL, '_blank');
-                            }
-                        } else {
-                            window.open(fileURL, '_blank');
-                        }
-                        speak(`Файл "${selectedFile.name}" открыт в новом окне.`);
-                    }
-                } catch (error) {
-                    console.error('Ошибка открытия файла:', error);
-                    speak('Не удалось открыть файл.');
-                }
-            }
-        }
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        function highlight() {
-            dropZone.classList.add('highlight');
-        }
-        
-        function unhighlight() {
-            dropZone.classList.remove('highlight');
-        }
-        
-        async function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const items = [...dt.items];
-            
-            for (const item of items) {
-                if (item.kind === 'file') {
-                    try {
-                        const handle = await item.getAsFileSystemHandle();
-                        if (handle) {
-                            fileHandles.set(handle.name, handle);
-                            if (handle.kind === 'directory') {
-                                await processDirectory(handle);
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Ошибка обработки файла:', error);
-                    }
-                }
-            }
-            
-            renderFileSystem();
-            speak('Файлы и папки успешно добавлены.');
-        }
-        
-        async function processDirectory(directoryHandle, path = []) {
-            for await (const entry of directoryHandle.values()) {
-                const currentPath = [...path, directoryHandle.name].join('/');
-                fileHandles.set(`${currentPath}/${entry.name}`, entry);
-                if (entry.kind === 'directory') {
-                    await processDirectory(entry, [...path, directoryHandle.name]);
-                }
-            }
-        }
-        
-        function toggleVoiceRecognition() {
-            if (isListening) {
-                recognition.stop();
-            } else {
-                recognition.start();
-            }
-        }
-        
-        function resetVoiceRecognition() {
-            isListening = false;
-            micBtn.classList.remove('active');
-            waves.style.display = 'none';
-        }
-        
-        function animateWaves() {
-            if (isListening) {
-                const waveElements = document.querySelectorAll('.wave');
-                waveElements.forEach(wave => {
-                    const randomHeight = Math.floor(Math.random() * 25) + 5;
-                    wave.style.height = `${randomHeight}px`;
-                });
-                requestAnimationFrame(animateWaves);
-            }
-        }
-        
-        function clearConversation() {
-            if (confirm('Вы уверены, что хотите очистить всю историю беседы?')) {
-                conversationHistory = [];
-                chats[activeChatId].history = [];
-                saveAllData();
-                renderConversation();
-                
-                setTimeout(() => {
-                    const welcomeMessage = 'Привет! Я ваш умный голосовой помощник. Чем могу помочь?';
-                    addMessage('assistant', welcomeMessage, true);
-                    speak(welcomeMessage);
-                }, 500);
-            }
-        }
-        
-        function addMessage(sender, text, isInitial = false) {
-            if (isInitial && conversationHistory.length > 0) return;
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(`${sender}-message`);
-            
-            const formattedText = text.split('\n').map(paragraph => {
-                return paragraph.trim() ? `<p>${paragraph}</p>` : '';
-            }).join('');
-            
-            messageDiv.innerHTML = formattedText;
-            chatArea.appendChild(messageDiv);
-            chatArea.scrollTop = chatArea.scrollHeight;
-            
-            conversationHistory.push({
-                sender: sender,
-                text: text,
-                timestamp: new Date().toISOString()
-            });
-            
-            chats[activeChatId].history = conversationHistory;
-            saveAllData();
         }
         
         function showTypingIndicator() {
@@ -2113,6 +2232,55 @@
                 stopMouseControl();
                 return 'Режим управления мышкой деактивирован.';
             }
+            else if (/(сон|спящий режим)/i.test(lowerInput)) {
+                return 'Перевожу систему в спящий режим.';
+            }
+            else if (/(выключить|выключи компьютер)/i.test(lowerInput)) {
+                return 'Выключаю компьютер.';
+            }
+            else if (/(запусти игру|играть)/i.test(lowerInput)) {
+                openEntertainmentExplorer();
+                return 'Открываю меню игр. Выберите игру для запуска.';
+            }
+            else if (/(запусти динозаврика|динозаврик)/i.test(lowerInput)) {
+                startOfflineGame();
+                return 'Запускаю игру "Динозаврик". Нажмите пробел, чтобы прыгать!';
+            }
+            else if (/(запусти змейку|змейка)/i.test(lowerInput)) {
+                startSnakeGame();
+                return 'Запускаю игру "Змейка". Используйте стрелки для управления.';
+            }
+            else if (/(запусти тетрис|тетрис)/i.test(lowerInput)) {
+                startTetrisGame();
+                return 'Запускаю игру "Тетрис". Используйте стрелки для управления.';
+            }
+            else if (/(еще раз|повтори|снова)/i.test(lowerInput)) {
+                if (offlineGame.style.display === 'flex') {
+                    startOfflineGame();
+                    return 'Запускаю игру "Динозаврик" снова.';
+                } else if (snakeGame.style.display === 'flex') {
+                    startSnakeGame();
+                    return 'Запускаю игру "Змейка" снова.';
+                } else if (tetrisGame.style.display === 'flex') {
+                    startTetrisGame();
+                    return 'Запускаю игру "Тетрис" снова.';
+                } else {
+                    return 'Пожалуйста, сначала запустите игру.';
+                }
+            }
+            else if (/(команды|список команд)/i.test(lowerInput)) {
+                return 'Вот список доступных команд:\n' +
+                       '- Открыть файлы/папки\n' +
+                       '- Показать заметки\n' +
+                       '- Развлечения (игры, гадания, тосты)\n' +
+                       '- Настройки\n' +
+                       '- Управление мышкой\n' +
+                       '- Запустить игру (динозаврик, змейка, тетрис)\n' +
+                       '- Еще раз (перезапустить текущую игру)\n' +
+                       '- Показать все команды\n' +
+                       '- Новый чат\n' +
+                       '- Очистить чат';
+            }
             else {
                 return await getOpenAIResponse(input, context);
             }
@@ -2384,6 +2552,530 @@
         function readPoem() {
             const randomPoem = poems[Math.floor(Math.random() * poems.length)];
             speak(`Вот стихотворение: ${randomPoem}`);
+        }
+        
+        function initVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+                recognition.lang = 'ru-RU';
+                recognition.interimResults = true;
+                recognition.continuous = true;
+                recognition.maxAlternatives = 5;
+                
+                if (noiseSuppressionEnabled) {
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                }
+                
+                recognition.onstart = () => {
+                    isListening = true;
+                    micBtn.classList.add('active');
+                    waves.style.display = 'flex';
+                    animateWaves();
+                };
+                
+                recognition.onresult = (event) => {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+                    
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript;
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+                    
+                    if (finalTranscript) {
+                        finalTranscript = finalTranscript.trim();
+                        
+                        if (finalTranscript.toLowerCase().includes('лайт')) {
+                            activateLightMode();
+                            return;
+                        }
+                        
+                        if (isLightModeActive) {
+                            processLightCommand(finalTranscript);
+                        } else {
+                            addMessage('user', finalTranscript);
+                            processUserInput(finalTranscript);
+                        }
+                    }
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error('Ошибка распознавания:', event.error);
+                    if (event.error !== 'no-speech') {
+                        addMessage('assistant', 'Не удалось распознать речь. Попробуйте ещё раз.', false);
+                    }
+                    resetVoiceRecognition();
+                };
+                
+                recognition.onend = () => {
+                    if (isLightModeActive && !isListening) {
+                        recognition.start();
+                    }
+                    resetVoiceRecognition();
+                };
+            } else {
+                addMessage('assistant', 'Ваш браузер не поддерживает голосовое распознавание. Пожалуйста, используйте Chrome или Edge.', true);
+                micBtn.disabled = true;
+            }
+        }
+        
+        function activateLightMode() {
+            isLightModeActive = true;
+            speak('Голосовой режим "лайт" активирован. Говорите команды без подтверждения. Через 2 секунды режим автоматически отключится.');
+            
+            clearTimeout(lightModeTimeout);
+            lightModeTimeout = setTimeout(() => {
+                isLightModeActive = false;
+                speak('Голосовой режим "лайт" автоматически отключен.');
+            }, 2000);
+        }
+        
+        function processLightCommand(command) {
+            command = command.toLowerCase();
+            
+            if (command.includes('стоп') || command.includes('выход')) {
+                isLightModeActive = false;
+                speak('Голосовой режим "лайт" деактивирован.');
+                return;
+            }
+            
+            if (command.includes('вверх')) {
+                moveMouse('up');
+            } else if (command.includes('вниз')) {
+                moveMouse('down');
+            } else if (command.includes('влево')) {
+                moveMouse('left');
+            } else if (command.includes('вправо')) {
+                moveMouse('right');
+            } else if (command.includes('клик') || command.includes('нажми')) {
+                simulateMouseClick(mouseX, mouseY);
+            } else if (command.includes('отмена') || command.includes('отменить')) {
+                stopMouseControl();
+            } else if (command.includes('проверка клавиатуры')) {
+                speak('Проверка клавиатуры: все клавиши работают нормально.');
+            } else if (command.includes('сон') || command.includes('спящий режим')) {
+                speak('Перевожу систему в спящий режим.');
+            } else if (command.includes('выключить') || command.includes('выключи компьютер')) {
+                speak('Выключаю компьютер.');
+            } else if (command.includes('запусти игру') || command.includes('играть')) {
+                openEntertainmentExplorer();
+                speak('Открываю меню игр. Выберите игру для запуска.');
+            } else if (command.includes('запусти динозаврика') || command.includes('динозаврик')) {
+                startOfflineGame();
+                speak('Запускаю игру "Динозаврик". Нажмите пробел, чтобы прыгать!');
+            } else if (command.includes('запусти змейку') || command.includes('змейка')) {
+                startSnakeGame();
+                speak('Запускаю игру "Змейка". Используйте стрелки для управления.');
+            } else if (command.includes('запусти тетрис') || command.includes('тетрис')) {
+                startTetrisGame();
+                speak('Запускаю игру "Тетрис". Используйте стрелки для управления.');
+            } else if (command.includes('еще раз') || command.includes('повтори') || command.includes('снова')) {
+                if (offlineGame.style.display === 'flex') {
+                    startOfflineGame();
+                    speak('Запускаю игру "Динозаврик" снова.');
+                } else if (snakeGame.style.display === 'flex') {
+                    startSnakeGame();
+                    speak('Запускаю игру "Змейка" снова.');
+                } else if (tetrisGame.style.display === 'flex') {
+                    startTetrisGame();
+                    speak('Запускаю игру "Тетрис" снова.');
+                } else {
+                    speak('Пожалуйста, сначала запустите игру.');
+                }
+            } else if (command.includes('команды') || command.includes('список команд')) {
+                speak('Вот список доступных команд: Открыть файлы или папки, Показать заметки, Развлечения, Настройки, Управление мышкой, Запустить игру, Еще раз, Показать все команды, Новый чат, Очистить чат');
+            } else {
+                processUserInput(command);
+            }
+            
+            clearTimeout(lightModeTimeout);
+            lightModeTimeout = setTimeout(() => {
+                isLightModeActive = false;
+                speak('Голосовой режим "лайт" автоматически отключен.');
+            }, 2000);
+        }
+        
+        function simulateMouseClick(x, y) {
+            mouseClickEffect.style.left = `${x - 15}px`;
+            mouseClickEffect.style.top = `${y - 15}px`;
+            mouseClickEffect.style.display = 'block';
+            
+            setTimeout(() => {
+                mouseClickEffect.style.display = 'none';
+            }, 500);
+            
+            const element = document.elementFromPoint(x, y);
+            if (element) {
+                element.click();
+            }
+        }
+        
+        function moveMouse(direction, amount = 10) {
+            if (!mouseControlActive) {
+                mouseControlActive = true;
+                mousePointer.style.display = 'block';
+                speak('Режим управления мышкой активирован. Скажите "влево", "вправо", "вверх" или "вниз" для перемещения. "Клик" для нажатия. "Отмена" для выхода.');
+                return;
+            }
+            
+            switch(direction) {
+                case 'left':
+                    mouseX = Math.max(0, mouseX - amount);
+                    break;
+                case 'right':
+                    mouseX = Math.min(window.innerWidth, mouseX + amount);
+                    break;
+                case 'up':
+                    mouseY = Math.max(0, mouseY - amount);
+                    break;
+                case 'down':
+                    mouseY = Math.min(window.innerHeight, mouseY + amount);
+                    break;
+            }
+            
+            mousePointer.style.left = `${mouseX - 10}px`;
+            mousePointer.style.top = `${mouseY - 10}px`;
+        }
+        
+        function stopMouseControl() {
+            mouseControlActive = false;
+            mousePointer.style.display = 'none';
+            speak('Режим управления мышкой деактивирован.');
+        }
+        
+        async function openSelectedFile() {
+            if (!selectedFile) return;
+            
+            const handle = fileHandles.get(selectedFile.path);
+            if (handle) {
+                try {
+                    const file = await handle.getFile();
+                    addToRecentFiles(selectedFile);
+                    
+                    if (file.type.startsWith('text/') || file.type === 'application/json') {
+                        const text = await file.text();
+                        mainContent.innerHTML = `<pre>${text}</pre>`;
+                        speak(`Содержимое файла "${selectedFile.name}": ${text.substring(0, 100)}...`);
+                    } else if (file.type.startsWith('image/')) {
+                        const fileURL = URL.createObjectURL(file);
+                        mainContent.innerHTML = `<img src="${fileURL}" style="max-width:100%; max-height:400px;">`;
+                        speak(`Открыто изображение "${selectedFile.name}".`);
+                    } else if (file.type.startsWith('audio/')) {
+                        const fileURL = URL.createObjectURL(file);
+                        mainContent.innerHTML = `
+                            <audio controls autoplay style="width:100%">
+                                <source src="${fileURL}" type="${file.type}">
+                            </audio>
+                        `;
+                        speak(`Воспроизводится аудио файл "${selectedFile.name}".`);
+                    } else if (file.type.startsWith('video/')) {
+                        const fileURL = URL.createObjectURL(file);
+                        mainContent.innerHTML = `
+                            <video controls autoplay style="max-width:100%; max-height:400px;">
+                                <source src="${fileURL}" type="${file.type}">
+                            </video>
+                        `;
+                        speak(`Воспроизводится видео файл "${selectedFile.name}".`);
+                    } else if (selectedFile.name.endsWith('.html') || selectedFile.name.endsWith('.htm')) {
+                        const text = await file.text();
+                        mainContent.innerHTML = text;
+                        speak(`Открыта веб-страница "${selectedFile.name}".`);
+                    } else {
+                        const fileURL = URL.createObjectURL(file);
+                        if (selectedFile.name.endsWith('.docx') || selectedFile.name.endsWith('.pptx')) {
+                            window.open(`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileURL)}`, '_blank');
+                        } else if (selectedFile.name.endsWith('.exe')) {
+                            if (confirm('Вы уверены, что хотите запустить исполняемый файл? Это может быть опасно.')) {
+                                window.open(fileURL, '_blank');
+                            }
+                        } else {
+                            window.open(fileURL, '_blank');
+                        }
+                        speak(`Файл "${selectedFile.name}" открыт в новом окне.`);
+                    }
+                } catch (error) {
+                    console.error('Ошибка открытия файла:', error);
+                    speak('Не удалось открыть файл.');
+                }
+            }
+        }
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function highlight() {
+            dropZone.classList.add('highlight');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('highlight');
+        }
+        
+        async function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const items = [...dt.items];
+            
+            for (const item of items) {
+                if (item.kind === 'file') {
+                    try {
+                        const handle = await item.getAsFileSystemHandle();
+                        if (handle) {
+                            fileHandles.set(handle.name, handle);
+                            if (handle.kind === 'directory') {
+                                await processDirectory(handle);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Ошибка обработки файла:', error);
+                    }
+                }
+            }
+            
+            renderFileSystem();
+            speak('Файлы и папки успешно добавлены.');
+        }
+        
+        async function processDirectory(directoryHandle, path = []) {
+            for await (const entry of directoryHandle.values()) {
+                const currentPath = [...path, directoryHandle.name].join('/');
+                fileHandles.set(`${currentPath}/${entry.name}`, entry);
+                if (entry.kind === 'directory') {
+                    await processDirectory(entry, [...path, directoryHandle.name]);
+                }
+            }
+        }
+        
+        function toggleVoiceRecognition() {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+        
+        function resetVoiceRecognition() {
+            isListening = false;
+            micBtn.classList.remove('active');
+            waves.style.display = 'none';
+        }
+        
+        function animateWaves() {
+            if (isListening) {
+                const waveElements = document.querySelectorAll('.wave');
+                waveElements.forEach(wave => {
+                    const randomHeight = Math.floor(Math.random() * 25) + 5;
+                    wave.style.height = `${randomHeight}px`;
+                });
+                requestAnimationFrame(animateWaves);
+            }
+        }
+        
+        function clearConversation() {
+            if (confirm('Вы уверены, что хотите очистить всю историю беседы?')) {
+                conversationHistory = [];
+                chats[activeChatId].history = [];
+                saveAllData();
+                renderConversation();
+                
+                setTimeout(() => {
+                    const welcomeMessage = 'Привет! Я ваш умный голосовой помощник. Чем могу помочь?';
+                    addMessage('assistant', welcomeMessage, true);
+                    speak(welcomeMessage);
+                }, 500);
+            }
+        }
+        
+        function addMessage(sender, text, isInitial = false) {
+            if (isInitial && conversationHistory.length > 0) return;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(`${sender}-message`);
+            
+            const formattedText = text.split('\n').map(paragraph => {
+                return paragraph.trim() ? `<p>${paragraph}</p>` : '';
+            }).join('');
+            
+            messageDiv.innerHTML = formattedText;
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            
+            conversationHistory.push({
+                sender: sender,
+                text: text,
+                timestamp: new Date().toISOString()
+            });
+            
+            chats[activeChatId].history = conversationHistory;
+            saveAllData();
+        }
+        
+        function setupEventListeners() {
+            micBtn.addEventListener('click', toggleVoiceRecognition);
+            
+            sendBtn.addEventListener('click', () => {
+                if (textInput.value.trim()) {
+                    processUserInput(textInput.value);
+                    textInput.value = '';
+                }
+            });
+            
+            textInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && textInput.value.trim()) {
+                    processUserInput(textInput.value);
+                    textInput.value = '';
+                }
+            });
+            
+            clearBtn.addEventListener('click', clearConversation);
+            
+            backBtn.addEventListener('click', () => {
+                window.location.href = 'Файловый проводник.html';
+            });
+            
+            notesSaveBtn.addEventListener('click', saveNotes);
+            
+            openInExplorerBtn.addEventListener('click', async () => {
+                if (selectedFile) {
+                    await openSelectedFile();
+                } else {
+                    speak('Пожалуйста, выберите файл для открытия.');
+                }
+            });
+            
+            deleteFileBtn.addEventListener('click', async () => {
+                if (selectedFile) {
+                    if (confirm(`Вы уверены, что хотите удалить "${selectedFile.name}"?`)) {
+                        const handle = fileHandles.get(selectedFile.path);
+                        if (handle) {
+                            try {
+                                await handle.remove();
+                                fileHandles.delete(selectedFile.path);
+                                speak(`Файл "${selectedFile.name}" удален.`);
+                                selectedFile = null;
+                                filePreview.classList.remove('active');
+                                renderFileSystem();
+                            } catch (error) {
+                                console.error('Ошибка удаления файла:', error);
+                                speak('Не удалось удалить файл.');
+                            }
+                        }
+                    }
+                } else {
+                    speak('Пожалуйста, выберите файл для удаления.');
+                }
+            });
+            
+            renameFileBtn.addEventListener('click', async () => {
+                if (selectedFile) {
+                    const newName = prompt('Введите новое имя:', selectedFile.name);
+                    if (newName && newName !== selectedFile.name) {
+                        const handle = fileHandles.get(selectedFile.path);
+                        if (handle) {
+                            try {
+                                await handle.move(newName);
+                                fileHandles.delete(selectedFile.path);
+                                selectedFile.name = newName;
+                                selectedFile.path = selectedFile.path.split('/').slice(0, -1).concat(newName).join('/');
+                                fileHandles.set(selectedFile.path, handle);
+                                speak(`Файл переименован в "${newName}".`);
+                                renderFileSystem();
+                            } catch (error) {
+                                console.error('Ошибка переименования файла:', error);
+                                speak('Не удалось переименовать файл.');
+                            }
+                        }
+                    }
+                } else {
+                    speak('Пожалуйста, выберите файл для переименования.');
+                }
+            });
+            
+            browseFilesBtn.addEventListener('click', async () => {
+                try {
+                    const dirHandle = await window.showDirectoryPicker();
+                    await processDirectory(dirHandle);
+                    renderFileSystem();
+                    speak('Файлы и папки успешно добавлены из проводника.');
+                } catch (error) {
+                    console.error('Ошибка выбора директории:', error);
+                }
+            });
+            
+            refreshFilesBtn.addEventListener('click', () => {
+                renderFileSystem();
+                speak('Список файлов обновлен.');
+            });
+            
+            guessMelodyBtn.addEventListener('click', playGuessMelody);
+            fortuneBtn.addEventListener('click', tellFortune);
+            toastBtn.addEventListener('click', tellToast);
+            poemBtn.addEventListener('click', readPoem);
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            newChatBtn.addEventListener('click', createNewChat);
+            dinoGameBtn.addEventListener('click', startOfflineGame);
+            snakeGameBtn.addEventListener('click', startSnakeGame);
+            tetrisGameBtn.addEventListener('click', startTetrisGame);
+            backToMenuBtn.addEventListener('click', () => {
+                offlineGame.style.display = 'none';
+                isGameRunning = false;
+                clearInterval(obstacleInterval);
+            });
+            playAgainBtn.addEventListener('click', () => {
+                startOfflineGame();
+            });
+            backToMenuBtnSnake.addEventListener('click', () => {
+                snakeGame.style.display = 'none';
+                isGameRunning = false;
+                clearInterval(snakeGameInterval);
+            });
+            playAgainBtnSnake.addEventListener('click', () => {
+                startSnakeGame();
+            });
+            backToMenuBtnTetris.addEventListener('click', () => {
+                tetrisGame.style.display = 'none';
+                isGameRunning = false;
+                clearInterval(tetrisGameInterval);
+            });
+            playAgainBtnTetris.addEventListener('click', () => {
+                startTetrisGame();
+            });
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+            
+            dropZone.addEventListener('drop', handleDrop, false);
+            
+            noiseSuppressionControl.addEventListener('change', () => {
+                noiseSuppressionEnabled = noiseSuppressionControl.checked;
+                updateNoiseSuppressionIndicator();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                if (mouseControlActive) {
+                    mousePointer.style.left = `${mouseX - 10}px`;
+                    mousePointer.style.top = `${mouseY - 10}px`;
+                }
+            });
         }
         
         window.addEventListener('load', () => {
